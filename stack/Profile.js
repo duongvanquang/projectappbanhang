@@ -5,18 +5,43 @@ import {
   StyleSheet, Image,
   Dimensions
 } from 'react-native';
+import { connect } from 'react-redux';
+import CartActions from '../redux/cart'
 
-export default class Profile extends Component {
+const cart = require('../components/shopping-cart.png')
+const home = require('../components/home.png')
+class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
     }
   }
-
+  componentDidMount() {
+    const { navigation } = this.props
+    navigation.setOptions({
+      header: props => <View
+        style={styles.viewCart}>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.goBack(null)}>
+          <Image
+            source={home}
+            style={styles.textimage}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate('Cart')}>
+          <Image
+            source={cart}
+            style={styles.textimage}
+          />
+        </TouchableOpacity>
+      </View>
+    })
+  }
   render() {
     const { route } = this.props
     const product = route?.params?.product
-    const { uri, name, price, gg } = product
+    const { uri = '', name, price, gg } = product
     return (
       <View style={styles.containerprofile}>
         <Image
@@ -31,7 +56,8 @@ export default class Profile extends Component {
         </View>
         <Text style={styles.containerfont}>AVAILABLE SIZES</Text>
         <View style={styles.sizeview}>
-          < TouchableOpacity style={styles.contaisize}>
+          < TouchableOpacity 
+          style={styles.contaisize}>
             <Text style={styles.sizetext}>39</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.contaisize}>
@@ -43,10 +69,15 @@ export default class Profile extends Component {
           <TouchableOpacity style={styles.contaisize}>
             <Text style={styles.sizetext}>42</Text>
           </TouchableOpacity>
-
         </View>
-
-
+        <TouchableOpacity
+          onPress={() => {
+            this.props.addCart(product)
+            this.props.navigation.navigate('Cart')
+          }}
+          style={styles.buttonAddCart}>
+          <Text style={styles.textAddCart}>Thêm vao Giỏ Hàng</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -54,7 +85,18 @@ export default class Profile extends Component {
 const { height, width } = Dimensions.get('screen')
 const heightImage = Math.round(width)
 const widthImage = Math.round(width)
-
+const mapStateToProps = (state) => {
+  return ({
+    size:state?.cart?.size
+  });
+};
+const mapDispatchToProps = (dispatch) => { //eslint-disable-line
+  return ({
+    dispatch,
+    addCart: (product) => (dispatch(CartActions.addCart(product))),
+  });
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);
 const styles = StyleSheet.create({
   containerprofile: {
     flex: 1,
@@ -112,5 +154,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     marginHorizontal: 5
-  }
+  },
+  buttonAddCart: {
+    backgroundColor: 'gray',
+    alignSelf: 'center',
+    margin: 15,
+    padding: 10,
+    borderRadius: 5,
+    borderWidth: 1
+  },
+  textAddCart: {
+    fontSize: 15,
+    color: 'white',
+  },
+  viewCart: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    marginTop: 20
+
+  },
+  textimage: {
+    width: 50,
+    height: 40,
+    resizeMode: 'contain',
+  },
 })

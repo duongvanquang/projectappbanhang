@@ -13,7 +13,7 @@ export default class Product extends Component {
     }
     render() {
         const { product } = this.props
-        const { uri, price, name, shop } = product
+        const { uri = '', price, name, shop } = product
         return (
             <TouchableOpacity
                 onPress={() => this.props.navigation.navigate('Profile', { product })}
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         borderWidth: 1,
-        
+
     },
     imageProduct: {
         width: widthImage,
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     },
     viewTitle: {
         flexDirection: 'row',
-        justifyContent:'space-evenly',
+        justifyContent: 'space-evenly',
         marginBottom: 10
     },
     colortext: {
